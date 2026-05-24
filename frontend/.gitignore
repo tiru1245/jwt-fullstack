@@ -1,0 +1,21 @@
+# Dependencies — very large folder, never push
+node_modules/
+
+# Build output
+dist/
+.angular/
+
+# Environment secrets
+src/environments/environment.local.ts
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,64 @@
+<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+  <h2>Login</h2>
+
+  <!-- ✅ Only one error block, placed here -->
+  @if (errorMessage) {
+  <div style="color: red; background: #fff0f0; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+    {{ errorMessage }}
+  </div>
+  }
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+    <div style="margin-bottom: 15px;">
+      <label style="display: block;">Email:</label>
+      <input
+        type="email"
+        formControlName="email"
+        style="width: 100%; padding: 8px; box-sizing: border-box;"
+        autocomplete="off"
+      />
+      @if (email?.invalid && email?.touched) {
+      @if (email?.errors?.['required']) {
+      <small style="color: red;">Email is required.</small>
+      }
+      @if (email?.errors?.['email']) {
+      <small style="color: red;">Enter a valid email address.</small>
+      }
+      }
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label style="display: block;">Password:</label>
+      <input
+        type="password"
+        formControlName="password"
+        style="width: 100%; padding: 8px; box-sizing: border-box;"
+        autocomplete="off"
+      />
+      @if (password?.invalid && password?.touched) {
+      @if (password?.errors?.['required']) {
+      <small style="color: red;">Password is required.</small>
+      }
+      @if (password?.errors?.['minlength']) {
+      <small style="color: red;">Password must be at least 6 characters.</small>
+      }
+      }
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="loginForm.invalid || isLoading"
+      style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;"
+    >
+      {{ isLoading ? 'Signing in...' : 'Sign In' }}
+    </button>
+
+  </form>
+
+  <!-- ❌ Remove the second @if(errorMessage) block that was here -->
+
+  <p style="margin-top: 15px; text-align: center;">
+    Don't have an account? <a routerLink="/register">Register here</a>
+  </p>
+</div>

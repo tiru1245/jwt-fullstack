@@ -1,0 +1,123 @@
+<div style="display: flex; min-height: 100vh; font-family: sans-serif; background: #f8f9fa;">
+
+  <!-- 1. Left Sidebar Component -->
+  <div style="width: 260px; background: #2c3e50; color: white; padding: 25px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+    <div>
+      <h3 style="margin-top: 0; color: #ecf0f1; letter-spacing: 1px;">🔐 SECURE HUB</h3>
+      <hr style="border: 0; border-top: 1px solid #34495e; margin: 20px 0;">
+
+      <!-- Navigation Tab Links -->
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        <li (click)="fetchProfile()" [style.background]="activeTab() === 'profile' ? '#34495e' : ''" style="padding: 12px; cursor: pointer; border-radius: 6px; margin-bottom: 8px; transition: 0.2s;">
+          👤 My Profile
+        </li>
+        <li (click)="fetchPayments()" [style.background]="activeTab() === 'payments' ? '#34495e' : ''" style="padding: 12px; cursor: pointer; border-radius: 6px; margin-bottom: 8px; transition: 0.2s;">
+          💳 Transaction Logs
+        </li>
+        <li (click)="fetchAdminUsers()" [style.background]="activeTab() === 'admin' ? '#34495e' : ''" style="padding: 12px; cursor: pointer; border-radius: 6px; margin-bottom: 8px; transition: 0.2s; color: #f1c40f;">
+          🛠️ Admin Board
+        </li>
+      </ul>
+    </div>
+
+    <!-- Logout Trigger Button placed firmly at sidebar base -->
+    <button (click)="onLogout()" style="width: 100%; padding: 12px; background: #e74c3c; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: 0.2s;">
+      🚪 Log Out Session
+    </button>
+  </div>
+
+  <!-- 2. Main Content Canvas Section -->
+  <div style="flex: 1; display: flex; flex-direction: column;">
+
+    <!-- Global Header Bar displaying real-time profile summary -->
+    <header style="background: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <h2 style="margin: 0; color: #34495e; text-transform: capitalize;">{{ activeTab() }} Workspace</h2>
+
+      <!-- Persistent mini profile identifier widget -->
+      @if (profileData()) {
+      <div style="display: flex; align-items: center; gap: 12px; background: #f1f2f6; padding: 6px 15px; border-radius: 30px;">
+        <div style="width: 32px; height: 32px; background: #3498db; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+          {{ profileData()?.email?.charAt(0)?.toUpperCase() }}
+        </div>
+        <span style="font-size: 14px; color: #2c3e50; font-weight: 500;">{{ profileData()?.email }}</span>
+        <span style="background: #27ae60; color: white; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: bold;">
+            {{ profileData()?.role?.replace('ROLE_', '') }}
+          </span>
+      </div>
+      }
+    </header>
+
+    <!-- Dynamic Workspace Panel Content Wrapper -->
+    <main style="flex: 1; padding: 40px; box-sizing: border-box;">
+      @if (errorMsg()) {
+      <div style="padding: 15px; background: #f8d7da; color: #721c24; border-radius: 6px; margin-bottom: 25px; border: 1px solid #f5c6cb; font-weight: 500;">
+        ⚠️ {{ errorMsg() }}
+      </div>
+      }
+
+      <!-- PROFILE CARD PANEL VIEW -->
+      @if (activeTab() === 'profile') {
+      <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); max-width: 600px;">
+        <h3 style="margin-top: 0; color: #2c3e50; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px;">Account Information Card</h3>
+        <table style="width: 100%; margin-top: 15px; border-spacing: 0 12px;">
+          <tr>
+            <td style="color: #7f8c8d; width: 150px; font-weight: 500;">Email Address:</td>
+            <td style="color: #2c3e50; font-weight: bold;">{{ profileData()?.email }}</td>
+          </tr>
+          <tr>
+            <td style="color: #7f8c8d; font-weight: 500;">Clearance Level:</td>
+            <td><code style="background: #e8f8f5; color: #117a65; padding: 4px 8px; border-radius: 4px; font-weight: bold;">{{ profileData()?.role }}</code></td>
+          </tr>
+          <tr>
+            <td style="color: #7f8c8d; font-weight: 500;">Verification Status:</td>
+            <td><span style="color: #27ae60; font-weight: bold;">● Verified System {{ profileData()?.status }}</span></td>
+          </tr>
+        </table>
+      </div>
+      }
+
+      <!-- PAYMENTS LIST PANEL VIEW (Fixed for List of Strings) -->
+      @if (activeTab() === 'payments') {
+      <div style="background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 600px; padding: 20px;">
+        <h3 style="margin-top: 0; color: #2c3e50; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px;">Your Payment History</h3>
+
+        <ul style="list-style: none; padding: 0; margin: 15px 0;">
+          @for (pay of paymentsList(); track pay) {
+          <li style="padding: 15px; border-bottom: 1px solid #f1f2f6; color: #2c3e50; font-family: monospace; font-size: 15px; display: flex; align-items: center; gap: 10px;">
+            🟢 {{ pay }}
+          </li>
+          }
+        </ul>
+      </div>
+      }
+
+      <!-- ADMIN DATA MANAGEMENT BOARD -->
+      @if (activeTab() === 'admin') {
+      <div style="background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead>
+          <tr style="background: #f1f2f6; color: #34495e;">
+            <th style="padding: 15px 20px;">DB Identifier Row ID</th>
+            <th style="padding: 15px 20px;">User Account Identity Email</th>
+            <th style="padding: 15px 20px;">Spring Security Authority Role</th>
+          </tr>
+          </thead>
+          <tbody>
+          @for (u of adminUsersList(); track u.id) {
+          <tr style="border-bottom: 1px solid #f1f2f6;">
+            <td style="padding: 15px 20px; color: #7f8c8d;">#{{ u.id }}</td>
+            <td style="padding: 15px 20px; font-weight: 500; color: #2c3e50;">{{ u.email }}</td>
+            <td style="padding: 15px 20px;">
+                    <span style="background: #ebf5fb; color: #2e86c1; padding: 3px 8px; border-radius: 4px; font-size: 13px; font-weight: 500; font-family: monospace;">
+                      {{ u.role }}
+                    </span>
+            </td>
+          </tr>
+          }
+          </tbody>
+        </table>
+      </div>
+      }
+    </main>
+  </div>
+</div>
